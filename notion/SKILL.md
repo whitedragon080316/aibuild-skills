@@ -72,6 +72,17 @@ Claude Code 自動：建頁面，寫入重點摘要 + 金句 + 待辦事項。
 
 ## 內部操作規則（Claude Code 讀的）
 
+### Token 驗證（每次操作前必做）
+批量操作前先驗證 token 是否有效，避免做到一半才發現 401：
+```bash
+curl -s -w "\n%{http_code}" "https://api.notion.com/v1/users/me" \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Notion-Version: 2022-06-28"
+```
+- 200 → 正常，繼續操作
+- 401 → Token 無效或過期，告訴學員：「你的 Notion Token 過期了，請到 notion.so/my-integrations 重新複製 Token 貼給我」
+- 不要在 token 無效的情況下繼續嘗試任何 API 操作
+
 ### 清空頁面 blocks 必須用 Python
 shell 的 curl + python3 -c 組合處理 Notion JSON 會遇到控制字元問題。一律用 Python script：
 ```python
